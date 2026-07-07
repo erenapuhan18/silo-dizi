@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SILO — 144 Kat Aşağı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0a0c0b;
+  --concrete:#151917;
+  --concrete-2:#1c221f;
+  --line:#2a322d;
+  --sodium:#e39b3b;
+  --sodium-dim:#7d5a29;
+  --phosphor:#a8c3a0;
+  --paper:#d6d0bf;
+  --dust:#8b877a;
+  --alarm:#c23b2e;
+  --stencil:'Saira Stencil One',sans-serif;
+  --sans:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--paper);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+::selection{background:var(--sodium);color:var(--void)}
+a{color:var(--sodium)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--sodium);outline-offset:3px}
+
+/* ---------- derinlik göstergesi ---------- */
+#gauge{
+  position:fixed;top:50%;right:28px;transform:translateY(-50%);
+  z-index:40;text-align:right;pointer-events:none;cursor:pointer;
+  opacity:0;transition:opacity .6s;
+}
+#gauge.on{opacity:1;pointer-events:auto}
+#gauge:hover .g-num{text-shadow:0 0 34px rgba(227,155,59,.6)}
+#gauge .g-label{font-family:var(--mono);font-size:10px;letter-spacing:.35em;color:var(--dust)}
+#gauge .g-num{
+  font-family:var(--stencil);font-size:56px;line-height:1;
+  color:var(--sodium);text-shadow:0 0 24px rgba(227,155,59,.35);
+}
+#gauge .g-dept{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--phosphor);min-height:14px}
+#gauge .g-ruler{
+  margin:10px 0 10px auto;width:14px;height:120px;
+  background:repeating-linear-gradient(to bottom,var(--line) 0,var(--line) 1px,transparent 1px,transparent 9px);
+  position:relative;
+}
+#gauge .g-ruler i{
+  position:absolute;left:-6px;right:-6px;height:2px;background:var(--sodium);
+  box-shadow:0 0 8px rgba(227,155,59,.7);top:0;transition:top .1s linear;
+}
+@media (max-width:900px){
+  #gauge{top:auto;bottom:16px;right:16px;transform:none;
+    background:rgba(10,12,11,.85);border:1px solid var(--line);padding:8px 12px}
+  #gauge .g-num{font-size:32px}
+  #gauge .g-ruler{display:none}
+}
+
+/* ---------- yüzey (hero) ---------- */
+#yuzey{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  position:relative;padding:56px 24px 0;overflow:hidden;
+}
+.hero-bg{position:absolute;top:0;left:0;right:0;height:72%;z-index:0;pointer-events:none}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;
+  filter:grayscale(.15) sepia(.12) contrast(1.06) brightness(.8);
+}
+.hero-bg::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(to right, rgba(10,12,11,.93) 0%, rgba(10,12,11,.62) 52%, rgba(10,12,11,.38) 100%),
+    linear-gradient(to bottom, rgba(10,12,11,.55) 0%, rgba(10,12,11,.28) 45%, var(--void) 97%);
+}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:2}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.4em;color:var(--dust);
+  margin-bottom:20px;
+}
+.hero-eyebrow b{color:var(--phosphor);font-weight:500}
+h1{
+  font-family:var(--stencil);font-weight:400;
+  font-size:clamp(88px,20vw,240px);line-height:.9;color:var(--paper);
+  letter-spacing:.02em;
+}
+h1 span{color:var(--sodium)}
+.hero-sub{
+  max-width:520px;margin-top:24px;color:var(--dust);font-size:18px;
+}
+.hero-sub strong{color:var(--paper);font-weight:600}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:14px;margin-top:36px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.3em;
+  color:var(--void);background:var(--sodium);border:none;cursor:pointer;
+  padding:16px 26px;text-decoration:none;
+}
+.hero-cta:hover{background:#f0b155}
+.hero-cta .arr{font-size:16px}
+.kesit-wrap{margin:64px auto 0;max-width:1100px;width:100%;position:relative;z-index:1}
+.kesit-cap{
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dust);
+  display:flex;justify-content:space-between;padding:8px 2px;border-top:1px solid var(--line);
+}
+.kesit-wrap svg{width:100%;height:auto;display:block}
+
+/* ---------- spoiler bandı ---------- */
+.tape{
+  background:repeating-linear-gradient(-45deg,var(--sodium) 0,var(--sodium) 16px,#111 16px,#111 32px);
+  padding:3px;
+}
+.tape-in{
+  background:var(--void);text-align:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.35em;color:var(--sodium);
+  padding:10px 16px;
+}
+
+/* ---------- şaft / istasyonlar ---------- */
+.shaft{
+  max-width:820px;margin:0 auto;padding:0 24px;
+  border-left:1px solid var(--line);
+  position:relative;
+}
+@media (min-width:1100px){.shaft{padding-left:56px}}
+.station{padding:110px 0 40px}
+.signage{margin-bottom:40px}
+.signage .kat{
+  font-family:var(--stencil);font-size:clamp(44px,8vw,84px);line-height:1;
+  color:var(--sodium);
+}
+.signage .yer{
+  font-family:var(--stencil);font-size:clamp(20px,4vw,34px);color:var(--paper);
+  letter-spacing:.06em;
+}
+.signage .not{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--dust);margin-top:8px}
+.station p{max-width:640px;margin-bottom:18px;color:#bdb8a8}
+.station p strong{color:var(--paper)}
+.station p em{color:var(--phosphor);font-style:normal}
+
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- ekran ---------- */
+.screen{
+  border:1px solid var(--line);background:#000;position:relative;overflow:hidden;
+  margin:34px 0 10px;cursor:crosshair;touch-action:none;
+}
+.screen .kir{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:opacity .9s}
+.screen .kir.temiz{opacity:0}
+.kir-hint{
+  position:absolute;left:14px;bottom:12px;pointer-events:none;
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;
+  color:rgba(214,208,191,.85);background:rgba(10,12,11,.6);padding:5px 9px;
+  transition:opacity .5s;
+}
+.screen svg{display:block;width:100%;height:auto}
+.screen::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.035) 0,rgba(255,255,255,.035) 1px,transparent 1px,transparent 3px);
+  mix-blend-mode:overlay;
+}
+.screen .flick{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+@keyframes flick{0%,94%,100%{opacity:0}95%{opacity:.04}96%{opacity:0}98%{opacity:.06}}
+.screen .flick{animation:flick 7s infinite}
+.screen-cap{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--dust);
+  margin-bottom:34px;
+}
+.screen-cap .canli{color:var(--alarm)}
+@keyframes blink{50%{opacity:.25}}
+.screen-cap .canli::before{content:"● ";animation:blink 1.6s infinite}
+
+/* ---------- fotoğraflar ---------- */
+.saha-foto{margin:34px 0;border:1px solid var(--line);background:#000}
+.saha-foto img{width:100%;display:block;filter:grayscale(.15) contrast(1.04) brightness(.92)}
+.saha-foto figcaption{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--dust);
+  padding:10px 14px;border-top:1px solid var(--line);
+}
+.screen .foto{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:saturate(.85) contrast(1.05) brightness(.92);
+}
+
+/* ---------- şaft tüneli (3B derinlik) ---------- */
+#tunel{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  perspective:700px;opacity:0;transition:opacity 1.2s;
+}
+#tunel.on{opacity:1}
+#tunel .halka{
+  position:absolute;left:50%;top:58%;width:120vmin;height:120vmin;
+  margin:-60vmin 0 0 -60vmin;border:2px dashed rgba(227,155,59,.14);border-radius:50%;
+  will-change:transform,opacity;
+}
+@media (max-width:900px){#tunel{display:none}}
+
+/* ---------- kartlar ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:34px 0}
+.dossier{
+  background:var(--concrete);border:1px solid var(--line);padding:20px;position:relative;
+}
+.d-foto{
+  margin:-20px -20px 14px;aspect-ratio:16/10;overflow:hidden;
+  border-bottom:1px solid var(--line);background:#000;
+}
+.d-foto img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:grayscale(.25) sepia(.12) contrast(1.05) brightness(.88);
+}
+.dossier .d-top{
+  font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--dust);
+  border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px;
+  display:flex;justify-content:space-between;
+}
+.dossier h3{font-family:var(--stencil);font-weight:400;font-size:22px;color:var(--paper);letter-spacing:.04em}
+.dossier .oyuncu{font-family:var(--mono);font-size:11px;color:var(--phosphor);margin-bottom:10px}
+.dossier p{font-size:14px;line-height:1.6;color:#a9a596;margin:0;max-width:none}
+.stamp{
+  position:absolute;top:14px;right:-6px;transform:rotate(6deg);
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;font-weight:500;
+  border:1.5px solid currentColor;padding:3px 8px;background:rgba(10,12,11,.7);
+}
+.stamp.kirmizi{color:var(--alarm)}
+.stamp.amber{color:var(--sodium)}
+.stamp.yesil{color:var(--phosphor)}
+
+/* ---------- belge (anlaşma) ---------- */
+.doc{
+  background:var(--paper);color:#26251f;padding:34px 30px;margin:34px 0;
+  font-size:15px;position:relative;
+}
+.doc::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(-45deg,#26251f 0,#26251f 10px,transparent 10px,transparent 20px);
+  opacity:.85;
+}
+.doc h3{font-family:var(--stencil);font-weight:400;font-size:24px;letter-spacing:.05em;margin-bottom:4px}
+.doc .doc-no{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:#6b6758;margin-bottom:18px}
+.doc ol{margin-left:20px;display:grid;gap:10px}
+.doc li{line-height:1.55}
+.doc li::marker{font-family:var(--mono);font-size:12px;color:#6b6758}
+.doc .muhur{
+  margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.25em;color:#8a2f24;
+  border:1.5px solid #8a2f24;display:inline-block;padding:4px 10px;transform:rotate(-2deg);
+}
+
+/* ---------- yasaklı cümle ---------- */
+.forbidden{
+  border:1px dashed var(--alarm);padding:26px;margin:34px 0;text-align:center;
+  background:rgba(194,59,46,.05);
+}
+.forbidden .f-uyari{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dust);margin-bottom:14px}
+.forbidden button{
+  font-family:var(--stencil);font-size:clamp(20px,4vw,30px);letter-spacing:.04em;
+  color:var(--alarm);background:none;border:none;cursor:pointer;line-height:1.3;
+}
+.forbidden button:hover{text-shadow:0 0 18px rgba(194,59,46,.6)}
+.forbidden .f-alt{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dust);margin-top:12px}
+
+/* temizlik protokol overlay */
+#protokol{
+  position:fixed;inset:0;z-index:100;background:rgba(10,4,3,.96);
+  display:none;align-items:center;justify-content:center;text-align:center;padding:24px;
+}
+#protokol.on{display:flex}
+#protokol .p-in{max-width:560px}
+#protokol .p-big{font-family:var(--stencil);font-size:clamp(30px,6vw,54px);color:var(--alarm);line-height:1.1}
+#protokol .p-sub{font-family:var(--mono);font-size:12px;letter-spacing:.25em;color:var(--paper);margin-top:20px;line-height:2}
+#protokol .p-kapat{
+  margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:.3em;
+  background:none;border:1px solid var(--line);color:var(--dust);padding:12px 22px;cursor:pointer;
+}
+#protokol .p-kapat:hover{border-color:var(--alarm);color:var(--alarm)}
+
+/* ---------- kalıntılar ---------- */
+.relics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin:34px 0}
+.relic{
+  border:1px solid var(--line);background:var(--concrete);padding:18px;
+}
+.relic .r-tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.25em;color:var(--void);
+  display:inline-block;padding:2px 8px;margin-bottom:12px;
+}
+.relic .r-tag.kirmizi{background:var(--alarm);color:#fff}
+.relic .r-tag.amber{background:var(--sodium)}
+.relic .r-tag.yesil{background:var(--phosphor)}
+.relic h4{font-family:var(--stencil);font-weight:400;font-size:18px;color:var(--paper);margin-bottom:6px;letter-spacing:.04em}
+.relic p{font-size:13px;line-height:1.6;color:#a9a596;margin:0;max-width:none}
+
+/* ---------- jeneratör sesi ---------- */
+.hum{
+  font-family:var(--mono);font-size:11px;letter-spacing:.25em;
+  background:none;border:1px solid var(--sodium-dim);color:var(--sodium);
+  padding:12px 20px;cursor:pointer;margin:-14px 0 20px;
+}
+.hum:hover{border-color:var(--sodium);background:rgba(227,155,59,.08)}
+
+/* ---------- jeneratör paneli ---------- */
+.genpanel{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin:34px 0;
+}
+.gen{background:var(--concrete);padding:18px 16px}
+.gen .g-k{font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--dust);margin-bottom:8px}
+.gen .g-v{font-family:var(--mono);font-size:26px;color:var(--phosphor)}
+.gen .g-v.uyari{color:var(--sodium)}
+.gen .g-u{font-size:11px;color:var(--dust)}
+@media (max-width:600px){.genpanel{grid-template-columns:1fr 1fr}}
+
+/* ---------- künye ---------- */
+.kunye{
+  border:1px solid var(--line);margin:34px 0;
+}
+.kunye .k-row{
+  display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--line);
+}
+.kunye .k-row:last-child{border-bottom:none}
+.kunye .k-k{
+  font-family:var(--mono);font-size:10px;letter-spacing:.25em;color:var(--dust);
+  padding:14px 16px;border-right:1px solid var(--line);align-self:center;
+}
+.kunye .k-v{padding:14px 16px;font-size:14px;color:#bdb8a8}
+.kunye .k-v b{color:var(--paper)}
+@media (max-width:640px){
+  .kunye .k-row{grid-template-columns:1fr}
+  .kunye .k-k{border-right:none;padding-bottom:0}
+}
+
+/* ---------- hava kilidi geçişi ---------- */
+#airlock{
+  position:fixed;inset:0;z-index:90;background:var(--void);
+  display:none;align-items:center;justify-content:center;
+}
+#airlock.on{display:flex}
+#airlock .a-in{text-align:center}
+#airlock .a-t{font-family:var(--stencil);font-size:clamp(24px,5vw,40px);color:var(--sodium);letter-spacing:.08em}
+#airlock .a-s{font-family:var(--mono);font-size:11px;letter-spacing:.4em;color:var(--dust);margin-top:12px}
+
+/* ---------- footer ---------- */
+footer{
+  border-top:1px solid var(--line);margin-top:80px;padding:40px 24px 120px;
+  text-align:center;
+}
+footer .f-mono{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dust);line-height:2.4}
+footer .f-eye{font-family:var(--stencil);font-size:18px;color:var(--sodium-dim);margin-top:18px;letter-spacing:.1em}
+
+/* ---------- şaft haritası ---------- */
+#harita{
+  position:fixed;top:50%;right:96px;transform:translateY(-50%);z-index:45;
+  background:var(--concrete);border:1px solid var(--line);padding:18px;
+  min-width:230px;display:none;
+}
+#harita.on{display:block}
+#harita h4{
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;font-weight:400;
+  color:var(--dust);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line);
+}
+#harita .durak{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:none;border:none;border-left:2px solid var(--line);
+  color:var(--paper);padding:9px 4px 9px 12px;cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+}
+#harita .durak:hover{border-left-color:var(--sodium);color:var(--sodium);background:rgba(227,155,59,.05)}
+#harita .durak .no{color:var(--sodium);font-family:var(--stencil);font-size:15px;min-width:36px}
+@media (max-width:900px){
+  #harita{top:auto;bottom:76px;right:12px;transform:none}
+}
+
+/* ---------- telsiz ---------- */
+#telsiz{
+  position:fixed;left:24px;bottom:16px;z-index:40;
+  opacity:0;pointer-events:none;transition:opacity .6s;
+}
+#telsiz.on{opacity:1;pointer-events:auto}
+#telsiz .t-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.25em;
+  background:rgba(10,12,11,.88);border:1px solid var(--line);color:var(--dust);
+  padding:9px 13px;cursor:pointer;
+}
+#telsiz .t-btn:hover{color:var(--phosphor);border-color:var(--phosphor)}
+#telsiz.acik .t-btn{color:var(--phosphor);border-color:var(--phosphor)}
+#telsiz .t-panel{
+  display:none;width:min(300px,72vw);background:rgba(10,12,11,.93);
+  border:1px solid var(--line);border-bottom:none;padding:12px 14px;
+  font-family:var(--mono);font-size:11px;color:var(--phosphor);
+  min-height:56px;line-height:1.7;letter-spacing:.04em;
+}
+#telsiz.acik .t-panel{display:block;animation:trxflick 3.7s infinite}
+#telsiz .t-imlec{animation:blink 1s infinite}
+@keyframes trxflick{0%,91%,95%,100%{opacity:1}93%{opacity:.55}97%{opacity:.75}}
+@media (max-width:900px){#telsiz{left:12px;bottom:12px}}
+
+/* hash ile derin girişte animasyonsuz, anında görünüm */
+html.deep-link .rv{transition:none}
+html.deep-link #gauge{transition:none}
+
+/* #flat: headless doğrulama için düz yerleşim (hero 100vh kısıtı kalkar) */
+html.flat #yuzey{min-height:0;padding-top:64px}
+html.flat .rv{opacity:1;transform:none;transition:none}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .screen .flick,.screen-cap .canli::before{animation:none}
+  #telsiz.acik .t-panel,#telsiz .t-imlec{animation:none}
+}
+</style>
+<noscript><style>.rv{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+
+<!-- şaft tüneli (3B arka plan) -->
+<div id="tunel" aria-hidden="true"></div>
+
+<!-- derinlik göstergesi -->
+<div id="gauge" role="button" tabindex="0" aria-label="Şaft haritasını aç" title="Şaft haritası">
+  <div class="g-label">DERİNLİK</div>
+  <div class="g-num" id="gNum">000</div>
+  <div class="g-ruler"><i id="gTick"></i></div>
+  <div class="g-dept" id="gDept">YÜZEY</div>
+</div>
+
+<!-- şaft haritası -->
+<nav id="harita" aria-label="Şaft haritası">
+  <h4>ŞAFT HARİTASI — SİLO 18</h4>
+  <button class="durak" data-hedef="yuzey"><span class="no">▲</span> YÜZEY</button>
+  <button class="durak" data-hedef="kat-001"><span class="no">001</span> KAFETERYA</button>
+  <button class="durak" data-hedef="kat-034"><span class="no">034</span> IT &amp; YARGI</button>
+  <button class="durak" data-hedef="kat-144"><span class="no">144</span> MAKİNE</button>
+  <button class="durak" data-hedef="disarisi"><span class="no">∅</span> TÜNELİN ÖTESİ</button>
+</nav>
+
+<!-- telsiz -->
+<div id="telsiz">
+  <div class="t-panel" aria-live="polite"><span id="tYazi"></span><span class="t-imlec">▌</span></div>
+  <button class="t-btn" id="tBtn" aria-pressed="false">◌ TELSİZ — KANAL 18</button>
+</div>
+
+<!-- hava kilidi geçişi -->
+<div id="airlock" role="presentation">
+  <div class="a-in">
+    <div class="a-t">HAVA KİLİDİ AÇILIYOR</div>
+    <div class="a-s">BASINÇ EŞİTLENİYOR…</div>
+  </div>
+</div>
+
+<!-- temizlik protokolü -->
+<div id="protokol" role="alertdialog" aria-label="Temizlik protokolü uyarısı">
+  <div class="p-in">
+    <div class="p-big">TALEP KAYDEDİLDİ</div>
+    <div class="p-sub">
+      ANLAŞMA UYARINCA BU TALEP GERİ ALINAMAZ.<br>
+      TEMİZLİK EKİBİ KIYAFETİNİZİ HAZIRLIYOR.<br>
+      YÜN PEDLERİNİZİ UNUTMAYIN.
+    </div>
+    <button class="p-kapat" id="pKapat">CÜMLEYİ HİÇ SÖYLEMEDİM</button>
+  </div>
+</div>
+
+<!-- ======== YÜZEY ======== -->
+<header id="yuzey">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="img/hero.jpg" alt="" onerror="this.parentNode.remove()">
+  </div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">APPLE TV+ DİZİSİ ÜZERİNE BİR HAYRAN İNCELEMESİ — <b>SAHA KAYDI 18</b></div>
+    <h1>S<span>I</span>LO</h1>
+    <p class="hero-sub">
+      On bin kişi, yerin <strong>144 kat</strong> altında yaşıyor.
+      Dışarısının öldürdüğünü biliyorlar; başka bir şey bilmiyorlar.
+      Kimse neden diye sormuyor — <strong>soranlar dışarı çıkıyor.</strong>
+    </p>
+    <a class="hero-cta" href="#kat-001" id="ctaGir">SİLO 18'E İN <span class="arr">↓</span></a>
+  </div>
+
+  <div class="kesit-wrap">
+    <div class="kesit-cap"><span>SİLO SAHASI — YERALTI KESİTİ</span><span>ÖLÇEK YOK • GİZLİLİK: KIRMIZI</span></div>
+    <svg viewBox="0 0 1200 520" role="img" aria-label="Zehirli yüzeyin altında sıralanmış onlarca silonun kesit çizimi; ortadaki Silo 18 ışıklı">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#181c17"/>
+          <stop offset="1" stop-color="#23251c"/>
+        </linearGradient>
+        <linearGradient id="dirt" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#12140f"/>
+          <stop offset="1" stop-color="#0a0c0b"/>
+        </linearGradient>
+      </defs>
+      <!-- gökyüzü -->
+      <rect x="0" y="0" width="1200" height="190" fill="url(#sky)"/>
+      <!-- tepeler / ufuk -->
+      <path d="M0,178 L120,168 L260,180 L400,160 L520,174 L640,158 L760,172 L900,162 L1050,176 L1200,166 L1200,190 L0,190 Z" fill="#1a1d16"/>
+      <!-- tepedeki iki beden -->
+      <ellipse cx="586" cy="157" rx="9" ry="3.4" fill="#0c0e0a"/>
+      <ellipse cx="604" cy="159" rx="9" ry="3.4" fill="#0c0e0a"/>
+      <!-- ölü ağaçlar -->
+      <path d="M180,168 l0,-16 m0,9 l-6,-7 m6,3 l5,-8" stroke="#20241c" stroke-width="2" fill="none"/>
+      <path d="M980,166 l0,-14 m0,8 l5,-6 m-5,2 l-5,-7" stroke="#20241c" stroke-width="2" fill="none"/>
+      <!-- toprak -->
+      <rect x="0" y="190" width="1200" height="330" fill="url(#dirt)"/>
+      <!-- silolar (18 hariç) -->
+      <g fill="#121613" stroke="#242b26" stroke-width="1.5">
+        <rect x="60"  y="226" width="44" height="294" rx="8"/>
+        <rect x="190" y="216" width="44" height="304" rx="8"/>
+        <rect x="320" y="228" width="44" height="292" rx="8"/>
+        <rect x="450" y="214" width="44" height="306" rx="8"/>
+        <rect x="710" y="214" width="44" height="306" rx="8"/>
+        <rect x="840" y="228" width="44" height="292" rx="8"/>
+        <rect x="970" y="216" width="44" height="304" rx="8"/>
+        <rect x="1100" y="226" width="44" height="294" rx="8"/>
+      </g>
+      <!-- silo 17 : ölü, karanlık -->
+      <rect x="450" y="214" width="44" height="306" rx="8" fill="#0d100e" stroke="#1c211d" stroke-width="1.5"/>
+      <!-- sensör direkleri -->
+      <g stroke="#2a322d" stroke-width="2">
+        <line x1="82" y1="190" x2="82" y2="172"/><line x1="212" y1="190" x2="212" y2="170"/>
+        <line x1="342" y1="190" x2="342" y2="173"/><line x1="472" y1="190" x2="472" y2="171"/>
+        <line x1="732" y1="190" x2="732" y2="171"/><line x1="862" y1="190" x2="862" y2="173"/>
+        <line x1="992" y1="190" x2="992" y2="170"/><line x1="1122" y1="190" x2="1122" y2="172"/>
+      </g>
+      <!-- SİLO 18 -->
+      <g>
+        <rect x="578" y="208" width="48" height="312" rx="9" fill="#171d18" stroke="#e39b3b" stroke-width="2"/>
+        <line x1="602" y1="190" x2="602" y2="166" stroke="#e39b3b" stroke-width="2.5"/>
+        <circle cx="602" cy="163" r="3" fill="#e39b3b"/>
+        <!-- kat çizgileri -->
+        <g stroke="#3a4238" stroke-width="1">
+          <line x1="582" y1="238" x2="622" y2="238"/><line x1="582" y1="268" x2="622" y2="268"/>
+          <line x1="582" y1="298" x2="622" y2="298"/><line x1="582" y1="328" x2="622" y2="328"/>
+          <line x1="582" y1="358" x2="622" y2="358"/><line x1="582" y1="388" x2="622" y2="388"/>
+          <line x1="582" y1="418" x2="622" y2="418"/><line x1="582" y1="448" x2="622" y2="448"/>
+          <line x1="582" y1="478" x2="622" y2="478"/>
+        </g>
+        <!-- yanan katlar -->
+        <g fill="#e39b3b" opacity=".9">
+          <rect x="584" y="222" width="36" height="3"/>
+          <rect x="584" y="311" width="36" height="3"/>
+          <rect x="584" y="491" width="36" height="3"/>
+        </g>
+        <text x="602" y="518" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" fill="#e39b3b" letter-spacing="2">18</text>
+      </g>
+      <!-- numaralar -->
+      <g font-family="IBM Plex Mono,monospace" font-size="11" fill="#3d463f" text-anchor="middle" letter-spacing="1">
+        <text x="82" y="516">14</text><text x="212" y="516">15</text><text x="342" y="516">16</text>
+        <text x="472" y="516">17</text><text x="732" y="516">19</text><text x="862" y="516">20</text>
+        <text x="992" y="516">21</text><text x="1122" y="516">22</text>
+      </g>
+      <text x="472" y="240" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#4a3530" letter-spacing="2">ÖLÜ</text>
+    </svg>
+  </div>
+</header>
+
+<div class="tape"><div class="tape-in">DİKKAT — BU SAYFA 1. VE 2. SEZON SPOILERLARI İÇERİR • AŞAĞISI GÜVENLİ DEĞİLDİR</div></div>
+
+<main class="shaft">
+
+  <!-- ======== KAT 001 ======== -->
+  <section class="station" id="kat-001" data-level="1" data-dept="KAFETERYA">
+    <div class="signage rv">
+      <div class="kat">KAT 001</div>
+      <div class="yer">KAFETERYA &amp; ŞERİF DEPARTMANI</div>
+      <div class="not">SİLONUN TEK PENCERESİ BURADADIR — VE O BİR PENCERE DEĞİLDİR</div>
+    </div>
+
+    <p class="rv">Silonun en üst katında, yemek masalarının karşısında dev bir ekran durur.
+    Dışarıdaki sensörlerden gelen görüntüyü gösterir: <strong>ölü bir tepe, kurşuni bir gökyüzü
+    ve yamaçta yatan iki beden.</strong> Sakinler o bedenlerin kim olduğunu bilir —
+    Şerif Holston Becker ve karısı Allison. İkisi de aynı yasaklı cümleyi söyledi,
+    ikisi de dışarı çıktı, ikisi de sensörleri temizledi ve öldü.</p>
+
+    <div class="screen rv">
+      <svg viewBox="0 0 1200 450" role="img" aria-label="Kafeterya ekranı: zehirli atmosfer altında ölü tepeler ve yamaçta iki beden">
+        <defs>
+          <linearGradient id="tox" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2e2f24"/>
+            <stop offset=".7" stop-color="#43412c"/>
+            <stop offset="1" stop-color="#514b31"/>
+          </linearGradient>
+          <radialGradient id="vin" cx=".5" cy=".5" r=".75">
+            <stop offset=".6" stop-color="rgba(0,0,0,0)"/>
+            <stop offset="1" stop-color="rgba(0,0,0,.55)"/>
+          </radialGradient>
+        </defs>
+        <rect width="1200" height="450" fill="url(#tox)"/>
+        <path d="M0,300 Q220,240 430,290 T900,270 T1200,300 L1200,450 L0,450 Z" fill="#2a281c"/>
+        <path d="M0,350 Q300,300 620,345 T1200,340 L1200,450 L0,450 Z" fill="#1e1d14"/>
+        <path d="M0,405 Q400,370 800,400 T1200,395 L1200,450 L0,450 Z" fill="#14130d"/>
+        <path d="M250,332 l0,-30 m0,16 l-13,-13 m13,6 l11,-15 m-11,9 l-6,-4" stroke="#191811" stroke-width="3" fill="none"/>
+        <path d="M1010,322 l0,-26 m0,14 l11,-11 m-11,5 l-12,-13" stroke="#191811" stroke-width="3" fill="none"/>
+        <!-- yamaçtaki iki beden -->
+        <g fill="#12110b">
+          <ellipse cx="565" cy="336" rx="17" ry="5.5"/>
+          <circle cx="580" cy="333" r="4.5"/>
+          <ellipse cx="620" cy="342" rx="17" ry="5.5"/>
+          <circle cx="606" cy="339" r="4.5"/>
+        </g>
+        <rect width="1200" height="450" fill="url(#vin)"/>
+        <text x="24" y="40" font-family="IBM Plex Mono,monospace" font-size="16" fill="rgba(214,208,191,.55)" letter-spacing="3">SENSÖR 01 — KUZEYDOĞU</text>
+        <text x="1176" y="428" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="14" fill="rgba(214,208,191,.4)" letter-spacing="2">TOKSİSİTE: ÖLÜMCÜL</text>
+      </svg>
+      <img class="foto" src="img/temizlik.jpg" alt="Koruyucu kıyafetli bir temizlikçi, ölü yüzeyde bayrağın yanında" loading="lazy" onerror="this.remove()">
+      <canvas class="kir" id="kirCanvas" aria-hidden="true"></canvas>
+      <div class="kir-hint" id="kirHint">SENSÖR LENSİ KİRLİ — YÜN PED GİBİ SÜRTEREK TEMİZLE</div>
+      <div class="flick"></div>
+    </div>
+    <div class="screen-cap rv">
+      <span class="canli">CANLI YAYIN</span>
+      <span>SON TEMİZLİK: HOLSTON BECKER</span>
+      <span id="netlik">GÖRÜNTÜ NETLİĞİ: %41</span>
+    </div>
+
+    <p class="rv">Herkesin sorduğu ama kimsenin yüksek sesle soramadığı soru şu:
+    <em>Ekran gerçeği mi gösteriyor?</em> Dışarı çıkan herkes — istisnasız herkes —
+    ölmeden önce dönüp sensörleri temizliyor. İçeridekilere son bir iyilik.
+    Ama kimse onları buna zorlayamaz. O hâlde neden hepsi temizliyor?
+    Cevap, bu dizinin en zarif fikirlerinden biri ve ilk sezonun kalbinde duruyor.</p>
+
+    <div class="cards">
+      <article class="dossier rv">
+        <span class="stamp kirmizi">TEMİZLİĞE GÖNDERİLDİ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 2891</span></div>
+        <div class="d-foto"><img src="img/holston.jpg" alt="Şerif Holston Becker" loading="lazy" style="object-position:0% 25%" onerror="this.parentNode.remove()"></div>
+        <h3>HOLSTON BECKER</h3>
+        <div class="oyuncu">DAVID OYELOWO</div>
+        <p>Silonun sevilen şerifi. Karısını temizliğe gönderdikten iki yıl sonra
+        hücresine girip aynı cümleyi söyledi. Rozetini Juliette'e bıraktı.</p>
+      </article>
+      <article class="dossier rv">
+        <span class="stamp kirmizi">TEMİZLİĞE GÖNDERİLDİ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 2890</span></div>
+        <div class="d-foto"><img src="img/allison.jpg" alt="Allison Becker" loading="lazy" style="object-position:20% 30%" onerror="this.parentNode.remove()"></div>
+        <h3>ALLISON BECKER</h3>
+        <div class="oyuncu">RASHIDA JONES</div>
+        <p>IT çalışanı. Silinmiş bir sabit diskin içinde silonun anlatmadığı
+        bir tarih buldu. Gördüğü şey ona dışarının güvenli olduğunu düşündürttü.
+        Yanılıyor muydu?</p>
+      </article>
+    </div>
+
+    <div class="forbidden rv">
+      <div class="f-uyari">ANLAŞMA'YA GÖRE AŞAĞIDAKİ CÜMLEYİ SÖYLEMEK GERİ ALINAMAZ BİR TALEPTİR</div>
+      <button id="btnYasak">“DIŞARI ÇIKMAK İSTİYORUM.”</button>
+      <div class="f-alt">MERAK EDİYORSANIZ DOKUNUN — SİZİ UYARDIK</div>
+    </div>
+
+    <p class="rv"><strong>Temizlik ritüeli</strong> silonun hem en büyük cezası hem de tek dinî törenidir:
+    talep eden kişi hücreye alınır, kendisine el yapımı bir koruyucu kıyafet giydirilir,
+    eline yün pedler tutuşturulur ve hava kilidinden dışarı bırakılır.
+    Kapı bir daha açılmaz. Kıyafet en fazla birkaç dakika dayanır.
+    Herkes bunu bilir. Yine de ekran karşısında toplanıp izlerler —
+    çünkü temizlik günü, silonun dışarıyı gördüğü tek gündür.</p>
+  </section>
+
+  <!-- ======== KAT 034 ======== -->
+  <section class="station" id="kat-034" data-level="34" data-dept="BİLGİ İŞLEM">
+    <div class="signage rv">
+      <div class="kat">KAT 034</div>
+      <div class="yer">BİLGİ İŞLEM (IT) &amp; YARGI</div>
+      <div class="not">SUNUCULARIN SERİN UĞULTUSU — VE ONLARI KORUYAN ADAMLAR</div>
+    </div>
+
+    <p class="rv">Silonun ortasında, ısısı bile ayrıcalık kokan bir kat:
+    <strong>IT</strong>. Başında, dizinin en iyi yazılmış karakterlerinden biri olan
+    <strong>Bernard Holland</strong> duruyor — Tim Robbins'in tebessümle tehdit arasında
+    gidip gelen oyunuyla. Bernard silonun gerçek tarihini bilen tek kişi olabilir;
+    ve dizinin ustalığı, onu hiçbir zaman basit bir kötü adama dönüştürmemesinde.
+    Bernard'a göre yalan, on bin kişiyi hayatta tutan tek şeydir.</p>
+
+    <p class="rv">Düzenin diğer bacağı <strong>Yargı</strong>: Anlaşma'yı harfiyen uygulayan,
+    kalıntı avcılığı yapan, gölgesi her kata düşen departman.
+    Yargıç Meadows'un adı her yerde, kendisi hiçbir yerde.
+    Sahadaki yüzü ise Robert Sims — Common'ın buz gibi sadakatiyle.</p>
+
+    <div class="doc rv">
+      <h3>ANLAŞMA</h3>
+      <div class="doc-no">KURUCULAR TARAFINDAN ONAYLANMIŞTIR — TARTIŞMAYA KAPALIDIR</div>
+      <ol>
+        <li>İsyandan önceki zamanlara ait her nesne <b>kalıntıdır</b>. Bulundurmak suçtur.</li>
+        <li>İsyandan önceki tarihi sormak, araştırmak ve anlatmak yasaktır.</li>
+        <li>Silo içinde asansör yoktur, hızlı haberleşme yoktur. Mesajlar hamallarla,
+            insanlar merdivenle taşınır. <b>Yavaşlık güvenliktir.</b></li>
+        <li>Çocuk sahibi olmak piyangoya bağlıdır. Kazananlara doğum izni verilir.</li>
+        <li>Dışarı çıkmak istediğini söyleyen herkes dışarı çıkar.
+            <b>Bu talep geri alınamaz.</b></li>
+      </ol>
+      <div class="muhur">YARGI — ONAYLANDI</div>
+    </div>
+
+    <p class="rv"><strong>Kalıntılar</strong>, dizinin dünyasını kuran küçük mucizeler.
+    Her biri, silodan önceki dünyadan sızmış bir kanıt — ve Yargı'nın en çok korktuğu şey.
+    Aşağıdakiler, soruşturma dosyalarından bilinen parçalar:</p>
+
+    <div class="relics rv">
+      <div class="relic">
+        <span class="r-tag kirmizi">SEVİYE: KIRMIZI</span>
+        <h4>SABİT DİSK</h4>
+        <p>George Wilkins'in sakladığı sürücü. İçinde silonun anlatmadığı her şey var:
+        eski bir temizlik videosu ve tünellerin planları. Uğruna insanlar öldü.</p>
+      </div>
+      <div class="relic">
+        <span class="r-tag amber">SEVİYE: SARI</span>
+        <h4>PEZ ŞEKERLİK</h4>
+        <p>Plastik, tavşan kafalı, anlamsız derecede neşeli. Eski dünyadan kalan
+        en masum şey — ve bir çocuğa verilebilecek en tehlikeli hediye.</p>
+      </div>
+      <div class="relic">
+        <span class="r-tag yesil">SEVİYE: YASAL</span>
+        <h4>KOL SAATİ</h4>
+        <p>George'un Juliette'e bıraktığı, hâlâ çalışan saat. Yasal bir kalıntı —
+        ama Yargı'ya göre yasal olması, masum olduğu anlamına gelmez.</p>
+      </div>
+      <div class="relic">
+        <span class="r-tag yesil">SEVİYE: YASAL</span>
+        <h4>ISI BANDI</h4>
+        <p>Kalıntı değil ama silonun en politik nesnesi: Makine'nin ürettiği bant,
+        IT'ye verilenden daha iyidir. Bu küçük detay, birinci sezonun kilididir.</p>
+      </div>
+    </div>
+
+    <div class="cards">
+      <article class="dossier rv">
+        <span class="stamp amber">YETKİ: SINIRSIZ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 0001</span></div>
+        <div class="d-foto"><img src="img/bernard.jpg" alt="Bernard Holland" loading="lazy" style="object-position:50% 15%" onerror="this.parentNode.remove()"></div>
+        <h3>BERNARD HOLLAND</h3>
+        <div class="oyuncu">TIM ROBBINS</div>
+        <p>IT başkanı, sonra belediye başkanı. Gözlüklü, kibar, sabırlı.
+        Silodaki herkesten daha fazlasını biliyor ve bildiği şey onu yiyip bitiriyor.</p>
+      </article>
+      <article class="dossier rv">
+        <span class="stamp yesil">GÖLGE ADAYI</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 4417</span></div>
+        <div class="d-foto"><img src="img/lukas.jpg" alt="Lukas Kyle gece kafeteryasında" loading="lazy" style="object-position:0% 30%" onerror="this.parentNode.remove()"></div>
+        <h3>LUKAS KYLE</h3>
+        <div class="oyuncu">AVI NASH</div>
+        <p>Geceleri kafeteryada oturup ekrandaki gökyüzüne bakan sunucu teknisyeni.
+        Işıkların hareket ettiğini fark eden ilk kişi. Merak, siloda pahalı bir alışkanlık.</p>
+      </article>
+      <article class="dossier rv">
+        <span class="stamp amber">YARGI GÜVENLİĞİ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 3302</span></div>
+        <div class="d-foto"><img src="img/sims.jpg" alt="Robert Sims" loading="lazy" style="object-position:50% 20%" onerror="this.parentNode.remove()"></div>
+        <h3>ROBERT SIMS</h3>
+        <div class="oyuncu">COMMON</div>
+        <p>Düzenin sessiz yumruğu. Ailesi için sistemin ayakta kalmasına inanıyor —
+        ta ki sistem ailesini de dosyalamaya başlayana kadar.</p>
+      </article>
+    </div>
+
+    <figure class="saha-foto rv">
+      <img src="img/merdiven.jpg" alt="Büyük Merdiven'de tek başına yürüyen bir sakin" loading="lazy" onerror="this.parentNode.remove()">
+      <figcaption><span>BÜYÜK MERDİVEN</span><span>KAT 034 → 144 • YÜRÜYEREK İKİ GÜN</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ======== KAT 144 ======== -->
+  <section class="station" id="kat-144" data-level="144" data-dept="MAKİNE DAİRESİ">
+    <div class="signage rv">
+      <div class="kat">KAT 144</div>
+      <div class="yer">MAKİNE DAİRESİ</div>
+      <div class="not">SİLONUN KALBİ BURADA ATAR — DAKİKADA 400 DEVİRLE</div>
+    </div>
+
+    <p class="rv">Merdivenin dibi. Yukarıdakilerin “derin aşağı” deyip geçtiği,
+    ışığı, havayı ve suyu üreten katlar. Burada her şey yağ, buhar ve gürültü —
+    ve dizinin kahramanı da tam buradan çıkıyor: <strong>Juliette Nichols</strong>,
+    Rebecca Ferguson'ın omuzlarında yükselen, inatçı, öfkeli, tamir etmeden duramayan
+    bir mühendis. Yukarısı ona bir şerif rozeti verdiğinde bile çantasında
+    anahtar takımıyla geziyor.</p>
+
+    <div class="genpanel rv" aria-label="Jeneratör durum paneli">
+      <div class="gen"><div class="g-k">JENERATÖR</div><div class="g-v" id="gvRpm">400</div><div class="g-u">devir/dk</div></div>
+      <div class="gen"><div class="g-k">ROTOR ISISI</div><div class="g-v uyari" id="gvIsi">87°</div><div class="g-u">nominal üstü</div></div>
+      <div class="gen"><div class="g-k">GÜÇ ÇIKIŞI</div><div class="g-v" id="gvGuc">%98</div><div class="g-u">silo geneli</div></div>
+      <div class="gen"><div class="g-k">SON BAKIM</div><div class="g-v">J.N.</div><div class="g-u">rotor hizalandı</div></div>
+    </div>
+    <button class="hum rv" id="btnHum">▶ JENERATÖRÜ DİNLE</button>
+
+    <figure class="saha-foto rv">
+      <img src="img/makine.jpg" alt="Makine dairesinde vardiya — fener ışığında iki işçi" loading="lazy" onerror="this.parentNode.remove()">
+      <figcaption><span>MAKİNE DAİRESİ — ATÖLYE</span><span>VARDİYA: GECE</span></figcaption>
+    </figure>
+
+    <p class="rv">Birinci sezonun en iyi bölümlerinden biri tamamen bu katta geçer:
+    jeneratörün sökülüp onarılması için silonun <em>karanlığa razı edilmesi</em>.
+    Dizi, kıyamet sonrası türünün en büyük gerilimini uzaylılardan ya da canavarlardan değil,
+    bir rotor balansından çıkarmayı başarıyor. Makine sussa, silo ölür —
+    ve bunu herkes bildiği hâlde jeneratörü sadece aşağıdakiler tanır.</p>
+
+    <div class="cards">
+      <article class="dossier rv">
+        <span class="stamp kirmizi">TEMİZLİĞE GÖNDERİLDİ — SAĞ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 5211</span></div>
+        <div class="d-foto"><img src="img/juliette.jpg" alt="Juliette Nichols" loading="lazy" style="object-position:50% 20%" onerror="this.parentNode.remove()"></div>
+        <h3>JULIETTE NICHOLS</h3>
+        <div class="oyuncu">REBECCA FERGUSON</div>
+        <p>Mühendis, sonra şerif, sonra firari. George'un ölümünün peşinden giderken
+        silonun temeline dokundu. Tepenin ardını gören ilk kişi oldu.</p>
+      </article>
+      <article class="dossier rv">
+        <span class="stamp yesil">ATÖLYESİNDE</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 1120</span></div>
+        <div class="d-foto"><img src="img/walker.jpg" alt="Martha Walker" loading="lazy" style="object-position:50% 20%" onerror="this.parentNode.remove()"></div>
+        <h3>MARTHA WALKER</h3>
+        <div class="oyuncu">HARRIET WALTER</div>
+        <p>Elektroniğin ustası. Atölyesinden yirmi beş yıldır tek adım çıkmadı —
+        ama telsizinin ulaşmadığı kat yok. Juliette'in gerçek annesi sayılır.</p>
+      </article>
+      <article class="dossier rv">
+        <span class="stamp amber">İSYAN ŞÜPHELİSİ</span>
+        <div class="d-top"><span>SAKİN DOSYASI</span><span>№ 5533</span></div>
+        <div class="d-foto"><img src="img/isyan.jpg" alt="Makine katında yüz yüze gelen iki grup" loading="lazy" onerror="this.parentNode.remove()"></div>
+        <h3>KNOX &amp; SHIRLEY</h3>
+        <div class="oyuncu">SHANE McRAE • REMMIE MILNER</div>
+        <p>Makine'nin ustabaşı ve en ateşli yüreği. İkinci sezonda, yukarının yalanına
+        karşı aşağının öfkesini örgütleyenler onlar oldu.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======== DIŞARISI ======== -->
+  <section class="station" id="disarisi" data-level="145" data-dept="TÜNELİN ÖTESİ">
+    <div class="signage rv">
+      <div class="kat">KAT ∅</div>
+      <div class="yer">TÜNELİN ÖTESİ</div>
+      <div class="not">BURADAN SONRASI İÇİN DOSYA YOK — SADECE SORULAR</div>
+    </div>
+
+    <p class="rv">Birinci sezonun son sahnesi, türün hafızasındaki en iyi finallerden biri:
+    Juliette temizliğe gönderilir, ölmez, tepeyi aşar — ve kamera geriye çekilir.
+    Vadide <strong>onlarca silo</strong> daha vardır. Ufukta, yıkık bir şehrin iskeleti.
+    O ana kadar izlediğimiz her şey, dev bir sistemin tek bir hücresiymiş.</p>
+
+    <figure class="saha-foto rv">
+      <img src="img/vadi.jpg" alt="Tepenin ardından görünen yıkık şehir ve vadi" loading="lazy" onerror="this.parentNode.remove()">
+      <figcaption><span>TEPENİN ARDI</span><span>BU GÖRÜNTÜ BİR SENSÖR KAYDI DEĞİLDİR</span></figcaption>
+    </figure>
+
+    <p class="rv">İkinci sezon bizi <strong>Silo 17</strong>'ye götürüyor: yıllar önce
+    “düşmüş”, merdivenleri boş, alt katları su altında bir hayalet silo. İçinde tek bir
+    sakin kalmış — kasanın içinde büyümüş, kendine <em>Solo</em> diyen Jimmy
+    (Steve Zahn, sezonun en kırılgan performansıyla). Solo'nun bölük pörçük anlattıkları,
+    silolar hakkındaki en büyük soruların kapısını aralıyor: Bunları kim yaptı?
+    Neden 18'in insanları bunu bilmiyor? Ve kapıyı içeriden kilitleyen kimdi?</p>
+
+    <figure class="saha-foto rv">
+      <img src="img/solo.jpg" alt="Solo, Silo 17'nin karanlık merdiveninde oturuyor" loading="lazy" onerror="this.parentNode.remove()">
+      <figcaption><span>SİLO 17 — SARMAL MERDİVEN</span><span>KAYITLI SAKİN: 1</span></figcaption>
+    </figure>
+
+    <p class="rv">Sezon finali ise cevabı bambaşka bir yerde aramaya başlıyor:
+    silolardan önceki dünyada. Dizinin bundan sonrası, Hugh Howey'nin
+    <em>Shift</em> ve <em>Dust</em> kitaplarının izinde — yani hikâye artık
+    sadece “dışarıda ne var?” değil, <strong>“bunu bize kim yaptı?”</strong> sorusu.</p>
+
+    <div class="kunye rv">
+      <div class="k-row"><div class="k-k">YAYINCI</div><div class="k-v"><b>Apple TV+</b> — ilk bölüm 5 Mayıs 2023</div></div>
+      <div class="k-row"><div class="k-k">KAYNAK</div><div class="k-v">Hugh Howey — <b>Wool / Shift / Dust</b> (Silo üçlemesi)</div></div>
+      <div class="k-row"><div class="k-k">GELİŞTİREN</div><div class="k-v"><b>Graham Yost</b> (Justified, The Americans)</div></div>
+      <div class="k-row"><div class="k-k">SEZONLAR</div><div class="k-v"><b>S1</b> (2023) ve <b>S2</b> (2024–25) yayınlandı • dizi <b>3. ve 4. sezonla final</b> yapacak şekilde onaylandı</div></div>
+      <div class="k-row"><div class="k-k">NEDEN İZLEMELİ</div><div class="k-v">Ağır ama asla yavan olmayan bir gizem; sınıf çatışmasını mimariye gömen bir dünya tasarımı; ve “gerçeği bilmek her zaman iyi midir?” sorusunu ciddiye alan nadir bir bilimkurgu.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="f-mono">
+    BU SAYFA RESMÎ DEĞİLDİR — ANLAŞMA'NIN BİLGİSİ DIŞINDA HAZIRLANMIŞTIR<br>
+    FOTOĞRAFLAR: SİLO © APPLE TV+ (TMDB ÜZERİNDEN) • KESİT ÇİZİMLERİ TEMSİLİDİR
+  </div>
+  <div class="f-eye">KURUCULAR GÖRÜYOR.</div>
+</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- scroll reveal (IO'suz: her ortamda çalışan konum ölçümü) ---- */
+  var rvEls=[].slice.call(document.querySelectorAll('.rv'));
+  function reveal(){
+    if(!rvEls.length) return;
+    var vh=window.innerHeight;
+    rvEls=rvEls.filter(function(el){
+      var r=el.getBoundingClientRect();
+      if(r.top < vh*0.92 && r.bottom > 0){ el.classList.add('in'); return false; }
+      return true;
+    });
+  }
+
+  /* ---- derinlik göstergesi ---- */
+  var gauge=document.getElementById('gauge'),
+      gNum=document.getElementById('gNum'),
+      gDept=document.getElementById('gDept'),
+      gTick=document.getElementById('gTick'),
+      telsizEl=document.getElementById('telsiz');
+  var stops=[{y:0,level:0,dept:'YÜZEY'}];
+  function buildStops(){
+    stops=[{y:0,level:0,dept:'YÜZEY'}];
+    document.querySelectorAll('.station').forEach(function(s){
+      stops.push({
+        y:s.offsetTop - window.innerHeight*0.35,
+        level:parseInt(s.dataset.level,10),
+        dept:s.dataset.dept
+      });
+    });
+  }
+  function fmt(n){
+    if(n>=145) return '∅∅∅';
+    return String(Math.max(0,Math.round(n))).padStart(3,'0');
+  }
+  /* ---- şaft tüneli ---- */
+  var tunel=document.getElementById('tunel'), halkalar=[];
+  var CYCLE=340, FAR=-2600;
+  if(!reduced){
+    for(var hi=0;hi<9;hi++){
+      var h=document.createElement('div');h.className='halka';
+      tunel.appendChild(h);halkalar.push(h);
+    }
+  }
+  function updateTunel(y){
+    if(!halkalar.length) return;
+    var total=CYCLE*halkalar.length;
+    for(var i=0;i<halkalar.length;i++){
+      var z=FAR+((i*CYCLE + y*0.55) % total);
+      var k=(z-FAR)/total; /* 0 uzak → 1 yakın */
+      halkalar[i].style.transform='translateZ('+z.toFixed(1)+'px) rotate('+((i*137+y*0.04)%360).toFixed(1)+'deg)';
+      halkalar[i].style.opacity=(k<.85 ? k*.9 : (1-k)*5).toFixed(2);
+    }
+  }
+
+  function onScroll(){
+    var y=window.scrollY;
+    gauge.classList.toggle('on', y>60);
+    telsizEl.classList.toggle('on', y>60);
+    tunel.classList.toggle('on', y>window.innerHeight*0.6);
+    updateTunel(y);
+    var lv=0,dept='YÜZEY';
+    for(var i=0;i<stops.length;i++){
+      var a=stops[i], b=stops[i+1];
+      if(!b || y<b.y){
+        if(b && b.y>a.y){
+          var t=Math.min(1,Math.max(0,(y-a.y)/(b.y-a.y)));
+          lv=a.level+(b.level-a.level)*t;
+        } else lv=a.level;
+        dept=a.dept;
+        if(b && y>=a.y && (b.y-y)<(y-a.y)) dept=a.dept;
+        break;
+      }
+      lv=b.level; dept=b.dept;
+    }
+    gNum.textContent=fmt(lv);
+    gDept.textContent=(lv>=145)?'TÜNELİN ÖTESİ':dept;
+    gTick.style.top=Math.min(118,(lv/144)*118)+'px';
+  }
+  /* derin bağlantı: sayfa #kat-XXX ile açıldıysa anında o kata in, her şeyi göster */
+  function jumpToHash(){
+    if(!location.hash) return;
+    if(location.hash==='#flat'){ document.documentElement.classList.add('flat'); return; }
+    var tgt=null;
+    try{ tgt=document.querySelector(location.hash); }catch(e){ return; }
+    if(!tgt) return;
+    document.documentElement.classList.add('deep-link');
+    rvEls.forEach(function(el){ el.classList.add('in'); });
+    rvEls=[];
+    var de=document.documentElement, prev=de.style.scrollBehavior;
+    de.style.scrollBehavior='auto';
+    window.scrollTo(0, tgt.getBoundingClientRect().top + window.scrollY - 16);
+    de.style.scrollBehavior=prev;
+  }
+
+  buildStops();
+  window.addEventListener('resize',function(){buildStops();onScroll();reveal();});
+  window.addEventListener('scroll',function(){onScroll();reveal();},{passive:true});
+  window.addEventListener('load',function(){buildStops();jumpToHash();onScroll();reveal();});
+  jumpToHash();
+  onScroll();
+  reveal();
+
+  /* ---- hava kilidi geçişi ---- */
+  var cta=document.getElementById('ctaGir'), airlock=document.getElementById('airlock');
+  cta.addEventListener('click',function(ev){
+    if(reduced) return; /* normal anchor davranışı */
+    ev.preventDefault();
+    airlock.classList.add('on');
+    setTimeout(function(){
+      airlock.classList.remove('on');
+      document.getElementById('kat-001').scrollIntoView({behavior:'smooth'});
+    },900);
+  });
+
+  /* ---- yasaklı cümle ---- */
+  var btn=document.getElementById('btnYasak'), prot=document.getElementById('protokol');
+  btn.addEventListener('click',function(){ prot.classList.add('on'); });
+  document.getElementById('pKapat').addEventListener('click',function(){
+    prot.classList.remove('on');
+  });
+
+  /* ---- jeneratör titreşimi ---- */
+  if(!reduced){
+    var rpm=document.getElementById('gvRpm'), isi=document.getElementById('gvIsi'), guc=document.getElementById('gvGuc');
+    setInterval(function(){
+      rpm.textContent=398+Math.floor(Math.random()*5);
+      isi.textContent=(86+Math.floor(Math.random()*4))+'°';
+      guc.textContent='%'+(97+Math.floor(Math.random()*3));
+    },1400);
+  }
+
+  /* ---- dosya kartlarında 3B eğilme ---- */
+  if(!reduced && window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.dossier').forEach(function(card){
+      card.addEventListener('pointermove',function(e){
+        var r=card.getBoundingClientRect();
+        var px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+        card.style.transition='transform .08s ease';
+        card.style.transform='perspective(700px) rotateX('+(-py*7).toFixed(2)+'deg) rotateY('+(px*7).toFixed(2)+'deg)';
+      });
+      card.addEventListener('pointerleave',function(){
+        card.style.transition='transform .4s ease';
+        card.style.transform='';
+      });
+    });
+  }
+
+  /* ---- jeneratör uğultusu (WebAudio, dosyasız) ---- */
+  var btnHum=document.getElementById('btnHum'), actx=null, hum=null;
+  btnHum.addEventListener('click',function(){
+    if(hum){ /* durdur */
+      hum.g.gain.linearRampToValueAtTime(0.0001, actx.currentTime+0.5);
+      var eski=hum; hum=null;
+      setTimeout(function(){ eski.o1.stop();eski.o2.stop();eski.lfo.stop(); },600);
+      btnHum.textContent='▶ JENERATÖRÜ DİNLE';
+      return;
+    }
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    var o1=actx.createOscillator(); o1.type='sawtooth'; o1.frequency.value=52;
+    var o2=actx.createOscillator(); o2.type='sine'; o2.frequency.value=104.7;
+    var lfo=actx.createOscillator(); lfo.frequency.value=6.7;
+    var lfoG=actx.createGain(); lfoG.gain.value=7; lfo.connect(lfoG); lfoG.connect(o1.frequency);
+    var flt=actx.createBiquadFilter(); flt.type='lowpass'; flt.frequency.value=210;
+    var g=actx.createGain(); g.gain.value=0.0001;
+    o1.connect(flt); o2.connect(flt); flt.connect(g); g.connect(actx.destination);
+    o1.start(); o2.start(); lfo.start();
+    g.gain.linearRampToValueAtTime(0.11, actx.currentTime+1.2);
+    hum={o1:o1,o2:o2,lfo:lfo,g:g};
+    btnHum.textContent='■ SUSTUR — KAT 144 UYUMAYA ÇALIŞIYOR';
+  });
+
+  /* ---- ekranı temizleme (yün ped ritüeli) ---- */
+  var scr=document.querySelector('.screen'),
+      kir=document.getElementById('kirCanvas'),
+      kirHint=document.getElementById('kirHint'),
+      netlik=document.getElementById('netlik');
+  if(scr && kir){
+    var kctx=kir.getContext('2d'), temizlendi=false, siliyor=false, dokunuldu=false, vurus=0;
+    function kirDoldur(){
+      var r=scr.getBoundingClientRect();
+      if(r.width<10) return;
+      kir.width=Math.round(r.width); kir.height=Math.round(r.height);
+      kctx.globalCompositeOperation='source-over';
+      kctx.fillStyle='rgba(52,47,36,.62)';
+      kctx.fillRect(0,0,kir.width,kir.height);
+      for(var i=0;i<90;i++){ /* leke ve kir tabakaları */
+        var x=Math.random()*kir.width, y2=Math.random()*kir.height,
+            rad=8+Math.random()*70;
+        var gr=kctx.createRadialGradient(x,y2,0,x,y2,rad);
+        var ton=Math.random()<.5 ? '35,30,22' : '78,70,52';
+        gr.addColorStop(0,'rgba('+ton+','+(0.12+Math.random()*.3).toFixed(2)+')');
+        gr.addColorStop(1,'rgba('+ton+',0)');
+        kctx.fillStyle=gr;
+        kctx.beginPath();kctx.arc(x,y2,rad,0,7);kctx.fill();
+      }
+    }
+    function sil(e){
+      var r=kir.getBoundingClientRect();
+      var x=(e.clientX-r.left)*(kir.width/r.width), y2=(e.clientY-r.top)*(kir.height/r.height);
+      kctx.globalCompositeOperation='destination-out';
+      var gr=kctx.createRadialGradient(x,y2,0,x,y2,42);
+      gr.addColorStop(0,'rgba(0,0,0,.85)');gr.addColorStop(1,'rgba(0,0,0,0)');
+      kctx.fillStyle=gr;
+      kctx.beginPath();kctx.arc(x,y2,42,0,7);kctx.fill();
+      dokunuldu=true;
+      if(++vurus%15===0) olc();
+    }
+    function olc(){
+      var t=document.createElement('canvas');t.width=48;t.height=27;
+      var tc=t.getContext('2d');tc.drawImage(kir,0,0,48,27);
+      var d=tc.getImageData(0,0,48,27).data, temiz=0;
+      for(var i=3;i<d.length;i+=4){ if(d[i]<60) temiz++; }
+      var oran=temiz/(48*27);
+      netlik.textContent='GÖRÜNTÜ NETLİĞİ: %'+Math.min(99,Math.round(41+oran*70));
+      if(oran>.55 && !temizlendi){
+        temizlendi=true;
+        kir.classList.add('temiz');
+        kirHint.style.opacity='0';
+        netlik.textContent='GÖRÜNTÜ NETLİĞİ: %99 — TEŞEKKÜRLER, TEMİZLİKÇİ';
+      }
+    }
+    scr.addEventListener('pointerdown',function(e){ if(!temizlendi){siliyor=true;sil(e);} });
+    scr.addEventListener('pointermove',function(e){ if(siliyor && !temizlendi) sil(e); });
+    window.addEventListener('pointerup',function(){ siliyor=false; });
+    window.addEventListener('load',function(){ if(!dokunuldu) kirDoldur(); });
+    window.addEventListener('resize',function(){
+      if(!temizlendi && !dokunuldu && Math.abs(kir.getBoundingClientRect().width-kir.width)>40) kirDoldur();
+    });
+    kirDoldur();
+  }
+
+  /* ---- şaft haritası ---- */
+  var harita=document.getElementById('harita');
+  function haritaAc(f){ harita.classList.toggle('on',f); }
+  gauge.addEventListener('click',function(){ haritaAc(!harita.classList.contains('on')); });
+  gauge.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); haritaAc(!harita.classList.contains('on')); }
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') haritaAc(false); });
+  document.addEventListener('click',function(e){
+    if(!harita.contains(e.target) && !gauge.contains(e.target)) haritaAc(false);
+  });
+  harita.querySelectorAll('.durak').forEach(function(b){
+    b.addEventListener('click',function(){
+      haritaAc(false);
+      var hedef=b.dataset.hedef;
+      if(hedef==='yuzey'){ window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}); return; }
+      var el=document.getElementById(hedef);
+      if(el) el.scrollIntoView({behavior:reduced?'auto':'smooth'});
+    });
+  });
+
+  /* ---- telsiz — kanal 18 ---- */
+  var tBtn=document.getElementById('tBtn'), tYazi=document.getElementById('tYazi');
+  var tAcik=false, tDonus=null, tHarf=null;
+  var mesajlar=[
+    "Walker, duyuyor musun? — Her zamanki gibi buradayım.",
+    "Jeneratörde titreşim var. Yukarıya söylemeyin, panik olmasın.",
+    "Kat 34 koridorunda kalıntı ihbarı. Yargı ekibi yolda.",
+    "Merdivende hamal geçişi var, sol tarafı boşaltın.",
+    "O tepenin ardında ne var, hiç merak ettin mi?",
+    "Ekrana çok bakma evlat. Merak, siloda pahalıdır.",
+    "Temizlik yarın gün doğumunda. Kafeterya kapalıdır.",
+    "Ben Juliette. Beni duyan var mı? …Kimse?",
+    "Hava kilidini açmayın. Ne duyarsanız duyun.",
+    "Bu frekans kayıt altındadır. Konuşmalarınıza dikkat edin.",
+    "Doğum piyangosu sonuçları asıldı. Kazananlara tebrikler.",
+    "Aşağıdan yukarıya not: en iyi ısı bandı hâlâ bizde."
+  ];
+  function yayinla(){
+    var msg="KSSHT… "+mesajlar[Math.floor(Math.random()*mesajlar.length)];
+    clearInterval(tHarf);
+    if(reduced){ tYazi.textContent=msg; return; }
+    var i=0; tYazi.textContent='';
+    tHarf=setInterval(function(){
+      tYazi.textContent=msg.slice(0,++i);
+      if(i>=msg.length) clearInterval(tHarf);
+    },26);
+  }
+  tBtn.addEventListener('click',function(){
+    tAcik=!tAcik;
+    telsizEl.classList.toggle('acik',tAcik);
+    tBtn.setAttribute('aria-pressed',String(tAcik));
+    if(tAcik){
+      tBtn.textContent='◉ TELSİZ AÇIK — KANAL 18';
+      yayinla(); tDonus=setInterval(yayinla,7000);
+    }else{
+      tBtn.textContent='◌ TELSİZ — KANAL 18';
+      clearInterval(tDonus); clearInterval(tHarf);
+    }
+  });
+
+  /* ---- #flat doğrulama: widget'ları da görünür kıl ---- */
+  if(document.documentElement.classList.contains('flat')){
+    gauge.classList.add('on'); telsizEl.classList.add('on');
+    harita.classList.add('on');
+    tAcik=true; telsizEl.classList.add('acik');
+    tBtn.setAttribute('aria-pressed','true');
+    tBtn.textContent='◉ TELSİZ AÇIK — KANAL 18';
+    tYazi.textContent="KSSHT… "+mesajlar[4];
+  }
+})();
+</script>
+</body>
+</html>
